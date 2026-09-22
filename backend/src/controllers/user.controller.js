@@ -87,21 +87,6 @@ const loginUser = async(req, res)=>{
     }
 }
 
-// const loginUser = async(req, res)=>{
-//     try {
-       
-//         return res.status(201).json({
-//             success: true,
-//             message:"User registered successfully",
-//             user:newUser
-//         })
-     
-//     } catch (error) {
-//         return res.status(500).json({
-//             success:false,
-//             message:error.message
-//         })    
-//     }
-// }
+
 
 export {registerUser, loginUser}
