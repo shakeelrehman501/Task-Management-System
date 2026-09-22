@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs"
-import User from "../models/user.schema";
+import User from "../models/user.schema.js";
 
-const registerUser = async()=>{
+const registerUser = async(req, res)=>{
     try {
        const {name, email, password} = req.body;
         //    All fields required
