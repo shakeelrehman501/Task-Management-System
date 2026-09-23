@@ -30,6 +30,44 @@ const createTask = async (req, res)=>{
     }
 }
 
+const editTask = async (req, res)=>{
+    try {  
+     const {title, description, status, priority, dueDate} = req.body
+     const task = await Tasks.findOne({
+        _id:req.params.id,
+        user:req.id
+     })
+     if(!task){
+        return res.status(400).json({
+            success:false,
+            message:"Task not found"
+        })
+     }
+    task.title = title ?? task.title;
+    task.description = description ?? task.description
+    task.status = status ?? task.status
+    task.priority = priority ?? task.priority
+    task.dueDate = dueDate ?? task.dueDate
+    await task.save()
+
+        return res.status(200).json({
+        success:true,
+        message:"Task updated successfully",
+        task,
+    })
+    } catch (error) {
+    return res.status(500).json({
+        success:false,
+        message:error.message
+    })
+    }
+}
 
 
-export {createTask}
+
+
+
+
+
+
+export {createTask, editTask}
