@@ -99,8 +99,6 @@ const deleteTask = async (req, res) => {
       success: true,
       message: "Task deleted successfully",
     });
-
-
   } catch (error) {
     return res.status(500).json({
       success: false,
@@ -109,6 +107,41 @@ const deleteTask = async (req, res) => {
   }
 };
 
+const updateTaskStatus = async (req, res) => {
+  try {
+    const { status } = req.body;
+    const allowedStatus = ["Pending", "In Progress", "Completed"];
+    if (!allowedStatus.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Invalid status. Status must be Pending, In Progress, or Completed.",
+      });
+    }
+    const task = await Tasks.findOne({
+      _id: req.params.id,
+      user: req.id,
+    });
+    if (!task) {
+      return res.status(404).json({
+        success: false,
+        message: "Task not found",
+      });
+    }
 
+    task.status = status ?? task.status;
+    await task.save();
 
-export { createTask, editTask, getTasks, deleteTask };
+    return res.status(200).json({
+      success: true,
+      message: "Task status updated successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export { createTask, editTask, getTasks, deleteTask, updateTaskStatus };
