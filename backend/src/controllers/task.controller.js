@@ -63,6 +63,26 @@ const editTask = async (req, res)=>{
     }
 }
 
+const getTasks = async (req, res)=>{
+    try {  
+    const userId = req.id.toString();
+    const tasks = await Tasks.find({user:userId})
+    console.log(tasks.length);
+    
+        return res.status(200).json({
+        success:true,
+        message:"Task created successfully",
+        counst: tasks.length,
+        tasks
+        
+    })
+    } catch (error) {
+    return res.status(500).json({
+        success:false,
+        message:error.message
+    })
+    }
+}
 
 
 
@@ -70,4 +90,4 @@ const editTask = async (req, res)=>{
 
 
 
-export {createTask, editTask}
+export {createTask, editTask, getTasks}
