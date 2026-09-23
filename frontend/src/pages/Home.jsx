@@ -1,8 +1,9 @@
+import Navbar from "../components/Navbar";
 
 const Home = () => {
   return (
-    <div>
-        Home page
+    <div className="min-h-screen bg-pink-50">
+        <Navbar/>
     </div>
   )
 }

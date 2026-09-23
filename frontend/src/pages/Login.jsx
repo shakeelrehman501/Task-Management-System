@@ -18,7 +18,12 @@ const Login = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
     try {
-      await login({ email: formData.email, password: formData.password });
+      const data = await login({
+        email: formData.email,
+        password: formData.password,
+      });
+      localStorage.setItem("token", data.token);
+
       setFormData({
         email: "",
         password: "",
