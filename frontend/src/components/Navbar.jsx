@@ -10,12 +10,12 @@ const Navbar = () => {
       if (!data.user.isLoggedIn) setLogin(false);
       toast.success("User loggedOut successfully");
     } catch (error) {
-      console.log(error);
+      toast.error(error.response?.data?.message || "Something went wrong, please try again")
     }
   };
   return (
     <nav className="w-full bg-blue-600 py-4 px-5">
-      <div className="w-full max-w-[1020px] mx-auto text-white font-medium flex items-center justify-between ">
+      <div className="w-full max-w-255 mx-auto text-white font-medium flex items-center justify-between ">
         <span className="text-xl">Logo</span>
         {login ? (
           <button

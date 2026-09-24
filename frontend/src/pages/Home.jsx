@@ -1,9 +1,13 @@
 import Navbar from "../components/Navbar";
+import TaskManager from "../components/Tasks";
 
 const Home = () => {
   return (
-    <div className="min-h-screen bg-pink-50">
+    <div className="bg-pink-50">
         <Navbar/>
+        <div className="w-full">
+        <TaskManager/>
+        </div>
     </div>
   )
 }
