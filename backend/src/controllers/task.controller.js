@@ -67,7 +67,6 @@ const getTasks = async (req, res) => {
   try {
     const userId = req.id.toString();
     const tasks = await Tasks.find({ user: userId });
-    console.log(tasks.length);
 
     return res.status(200).json({
       success: true,

@@ -74,12 +74,7 @@ const loginUser = async (req, res) => {
     }
     // Create access token
     const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY, {
-      expiresIn: "15m",
-    });
-
-    // Create refresh token
-    const refreshToken = jwt.sign({ id: user._id }, process.env.SECRET_KEY, {
-      expiresIn: "30d",
+      expiresIn: "1d",
     });
 
     user.isLoggedIn = true;
@@ -88,8 +83,7 @@ const loginUser = async (req, res) => {
       success: true,
       message: "User login successfully",
       user: user,
-      token: token,
-      refreshToken: refreshToken,
+      token: token
     });
   } catch (error) {
     return res.status(500).json({
@@ -100,10 +94,10 @@ const loginUser = async (req, res) => {
 };
 
 const logout = async (req, res) => {
-  console.log(req.id);
   try {
     const user = await User.findById(req.id);
     user.isLoggedIn = false;
+    await user.save()
     return res.status(200).json({
       success: true,
       message: "User loggedOut successfully",
