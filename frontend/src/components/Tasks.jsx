@@ -1,62 +1,118 @@
-import React, { useState } from "react";
-
+import React, { useState, useEffect } from "react";
+import { createTask, deleteTask, editTask, getTasks } from "../api/authApi";
+import { toast } from "react-hot-toast";
 const TaskManager = () => {
-  const [tasks, setTasks] = useState([]);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [status, setStatus] = useState("Pending");
-  const [priority, setPriority] = useState("High");
-  const [taskId, setTaskId] = useState(null);
+  const [taskList, setTaskList] = useState([]);
+  const [tasks, setTasks] = useState({
+    title: "",
+    description: "",
+    status: "Pending",
+    priority: "High",
+    dueDate: "",
+  });
+  const [editTaskId, setEditTaskId] = useState(null);
   const [statusFilter, setStatusFilter] = useState("All Tasks");
 
-  const addTaskHandler = () => {
-    if (title === "") {
-      alert("Title field is required");
-      return;
-    }
-    if (taskId !== null) {
-      setTasks((allTask) =>
-        allTask.map((task) =>
-          task.id === taskId
-            ? {
-                title,
-                description,
-                status,
-                priority,
-              }
-            : task,
-        ),
-      );
-      setTaskId(null);
+  const changeHandler = (e) => {
+    const { name, value } = e.target;
+    setTasks((allTask) => ({
+      ...allTask,
+      [name]: value,
+    }));
+  };
+
+  useEffect(() => {
+    const fetchTask = async () => {
+      try {
+        let data = await getTasks();
+        setTaskList(data.tasks);
+      } catch (error) {
+        toast.error(error.response?.data?.message || "Something went wrong");
+      }
+    };
+    fetchTask();
+  }, []);
+
+  // Create Task Handler
+  const addTaskHandler = async () => {
+    if (editTaskId !== null) {
+      try {
+        await editTask(editTaskId, tasks);
+        setTaskList((allTask) =>
+          allTask.map((t) =>
+            t._id === editTaskId
+              ? {
+                  _id: editTaskId,
+                  title: tasks.title,
+                  description: tasks.description,
+                  status: tasks.status,
+                  priority: tasks.priority,
+                  dueDate: tasks.dueDate,
+                }
+              : t,
+          ),
+        );
+        toast.success("Task edited successfully");
+        setTasks({
+          title: "",
+          description: "",
+          status: "Pending",
+          priority: "High",
+          dueDate: "",
+        });
+        setEditTaskId(null);
+      } catch (error) {
+        toast.error(error.response?.data?.message || "Something went wrong");
+      }
     } else {
-      setTasks((allTask) => [
-        ...allTask,
-        { id: Date.now(), title, description, status, priority },
-      ]);
+      try {
+        const data = await createTask(tasks);
+        setTaskList((prevTask) => [...prevTask, data.task]);
+        toast.success("Task created successfully");
+
+        setTasks({
+          title: "",
+          description: "",
+          status: "Pending",
+          priority: "High",
+          dueDate: "",
+        });
+      } catch (error) {
+        toast.error(error.response?.data?.message || "Something went wrong");
+      }
     }
-    setTitle("");
-    setDescription("");
-    setStatus("Pending");
-    setPriority("High");
   };
 
-  const editTask = (task) => {
-    setTitle(task.title);
-    setDescription(task.description);
-    setStatus(task.status);
-    setPriority(task.priority);
-    setTaskId(task.id);
+  // Delete Task Handler
+  const deleteTaskHandler = async (task) => {
+    try {
+      await deleteTask(task._id);
+      setTaskList((allTask) => allTask.filter((t) => t._id !== task._id));
+      toast.success("Task deleted successfully");
+    } catch (error) {
+      console.log(error);
+      toast.error("delete error");
+    }
   };
 
-  const deleteTask = (id) => {
-    console.log(id);
-    setTasks((allTask) => allTask.filter((task) => task.id !== id));
+  // Edit Task Handler
+  const editTaskHandler = (task) => {
+    setEditTaskId(task._id);
+    setTasks({
+      title: task.title,
+      description: task.description,
+      status: task.status,
+      priority: task.priority,
+      dueDate: task.dueDate,
+    });
   };
 
-  const filteredTask = tasks.filter((task) => {
+  // Tasks Filteration
+  const filteredTasks = taskList.filter((task) => {
     if (task.status === statusFilter || statusFilter === "All Tasks")
       return task.status;
   });
+
   return (
     <div className="max-w-5xl mx-auto p-6">
       {/* Heading */}
@@ -65,14 +121,15 @@ const TaskManager = () => {
       </div>
       {/* Add Task  */}
       <div className="block lg:flex gap-10">
-        <div className="border w-full border-gray-400 rounded-xl p-5 mb-6">
+        <div className="border w-full border-gray-300 shadow-md rounded-xl p-5 mb-6 max-h-120">
           <h2 className="text-lg font-semibold mb-4">Add Task</h2>
 
           <div className="grid gap-4">
             <input
               type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              name="title"
+              value={tasks.title}
+              onChange={changeHandler}
               placeholder="Task title"
               className="border border-gray-400 rounded-lg px-4 py-2"
             />
@@ -80,9 +137,17 @@ const TaskManager = () => {
             <textarea
               placeholder="Task description"
               rows="4"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              name="description"
+              value={tasks.description}
+              onChange={changeHandler}
               className="border border-gray-400 rounded-lg px-4 py-2"
+            />
+            <input
+              type="date"
+              name="dueDate"
+              value={tasks.dueDate}
+              onChange={changeHandler}
+              className="border border-gray-300 rounded-lg p-2"
             />
             {/* Status */}
             <div className="flex gap-5">
@@ -91,9 +156,10 @@ const TaskManager = () => {
                   <input
                     type="radio"
                     id={item}
+                    name="status"
                     value={item}
-                    checked={status === item}
-                    onChange={(e) => setStatus(e.target.value)}
+                    checked={tasks.status === item}
+                    onChange={changeHandler}
                   />
                   <label htmlFor={item}>{item}</label>
                 </div>
@@ -107,9 +173,10 @@ const TaskManager = () => {
                   <input
                     id={item}
                     type="radio"
+                    name="priority"
                     value={item}
-                    checked={priority === item}
-                    onChange={(e) => setPriority(e.target.value)}
+                    checked={tasks.priority === item}
+                    onChange={changeHandler}
                   />
                   <label htmlFor={item}>{item}</label>
                 </div>
@@ -140,20 +207,15 @@ const TaskManager = () => {
             </select>
           </div>
           {/* Tasks */}
-          {tasks.length < 1 && (
-            <div className="text-center font-semibold text-lg">
-              No task added yet.
-            </div>
-          )}
-          {filteredTask.length < 1 && (
+          {filteredTasks.length < 1 && (
             <div className="text-center font-semibold text-lg">
               No task is available.
             </div>
           )}
-          {filteredTask.map((task, index) => (
+          {filteredTasks.map((task, index) => (
             <div
               key={index}
-              className="border border-gray-400 rounded-xl p-5 flex justify-between items-center"
+              className="border border-gray-400 shadow-md rounded-xl p-5 flex justify-between items-center"
             >
               <div>
                 <h3 className="font-semibold text-lg">{task.title}</h3>
@@ -166,18 +228,21 @@ const TaskManager = () => {
                 <span className="text-sm text-red-700 font-semibold">
                   {task.priority}
                 </span>
+                <div>
+                  <span className="text-sm text-gray-700">{task.dueDate}</span>
+                </div>
               </div>
 
               <div className="flex gap-2">
                 <button
-                  onClick={() => editTask(task)}
+                  onClick={() => editTaskHandler(task)}
                   className="border border-gray-400 px-4 py-2 rounded-lg"
                 >
                   Edit
                 </button>
 
                 <button
-                  onClick={() => deleteTask(task.id)}
+                  onClick={() => deleteTaskHandler(task)}
                   className="bg-red-500 text-white px-4 py-2 rounded-lg"
                 >
                   Delete

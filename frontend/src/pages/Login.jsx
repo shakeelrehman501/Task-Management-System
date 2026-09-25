@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { login } from "../api/authApi";
 import { toast } from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 const Login = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -59,9 +59,18 @@ const Login = () => {
               className="h-8 px-3 py-4.5 border-2 border-gray-300 rounded-lg w-full"
             />
           </div>
-          <button className="bg-blue-700 hover:bg-blue-800 cursor-pointer text-white font-medium w-full h-10 rounded-lg mt-3 ">
+          <button
+            type="submit"
+            className="bg-blue-700 hover:bg-blue-800 cursor-pointer text-white font-medium w-full h-10 rounded-lg mt-3 "
+          >
             Login
           </button>
+          <div className="text-center mt-4">
+            If you haven't signed up,{" "}
+            <Link to="/signup" className="text-blue-600 font-bold underline">
+              Sign Up
+            </Link>
+          </div>
         </form>
       </div>
     </div>
