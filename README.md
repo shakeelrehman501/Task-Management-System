@@ -1,4 +1,6 @@
-Task Management System
+## Task Management System
+A full-stack Task Management System built with React.js, Node.js, Express.js, and MongoDB. 
+Users can register, log in and manage their tasks through a simple interface.
 
 ## Features
 - User Registration
@@ -19,3 +21,11 @@ Task Management System
 - JWT
 - bcrypt
 
+
+### Frontend
+
+- React.js
+- React Router
+- Axios
+- Tailwind CSS
+- React Hot Toast
