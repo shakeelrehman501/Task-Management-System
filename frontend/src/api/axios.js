@@ -2,7 +2,7 @@
 import axios from "axios"
 
 const api = axios.create({
-    baseURL: "http://localhost:8000/api",
+    baseURL: "https://task-management-system-ii5d.vercel.app/",
     withCredentials:true,
     headers:{
         "Content-Type": "application/json"
