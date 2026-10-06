@@ -6,7 +6,7 @@ import cors from "cors"
 const app = express()
 app.use(
   cors({
-    origin: "https://task-management-system-phi-blush.vercel.app/api",
+    origin: `https://task-management-system-phi-blush.vercel.app${"/api"}`,
     credentials: true,
   })
 );
