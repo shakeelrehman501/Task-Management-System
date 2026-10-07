@@ -1,9 +1,9 @@
 
 import axios from "axios"
-// baseURL: "https://task-management-system-ii5d.vercel.app/api",
+const API_URL = import.meta.env.VITE_API_URL;
 
 const api = axios.create({
-    baseURL: "http://localhost:8000/api",
+    baseURL: API_URL,
     withCredentials:true,
     headers:{
         "Content-Type": "application/json"
