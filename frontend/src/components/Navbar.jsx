@@ -1,16 +1,23 @@
-import { useState } from "react";
+import {  useState } from "react";
 import { logout } from "../api/authApi";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 
 const Navbar = () => {
-  const [login, setLogin] = useState(false);
-
+  const [login, setLogin] = useState(()=>{
+    return !!localStorage.getItem("token")
+  });
+  
+   // Check login status when Navbar loads
+  
+  
   const submitHandler = async () => {
     try {
       const data = await logout();
       setLogin(true)
-      if (!data.user.isLoggedIn) ;
+      if (!data.user.isLoggedIn) {
+        setLogin(false)
+      }
       toast.success("User loggedOut successfully");
     } catch (error) {
       toast.error(
