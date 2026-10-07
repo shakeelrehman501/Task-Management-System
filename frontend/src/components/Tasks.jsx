@@ -33,7 +33,7 @@ const TaskManager = () => {
     const fetchTask = async () => {
       try {
         let data = await getTasks();
-        setTaskList(data.tasks);
+        setTaskList(data.tasks || []);
       } catch (error) {
         toast.error(error.response?.data?.message || "Something went wrong");
       }
