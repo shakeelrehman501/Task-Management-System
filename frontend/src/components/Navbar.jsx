@@ -40,19 +40,19 @@ const Navbar = () => {
 
         {/* Login / Logout */}
         {login ? (
-          <Link to={"/login"}>
-            <button className="cursor-pointer rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-blue-600 shadow-sm transition-all duration-200 hover:bg-blue-50 hover:shadow-md active:scale-95 sm:px-6">
-              Login
-            </button>
-          </Link>
-        ) : 
-        (
           <button
             onClick={submitHandler}
             className="cursor-pointer rounded-xl bg-red-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-red-700 hover:shadow-md active:scale-95 sm:px-6"
           >
             Logout
           </button>
+        ) : 
+        (
+          <Link to={"/login"}>
+            <button className="cursor-pointer rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-blue-600 shadow-sm transition-all duration-200 hover:bg-blue-50 hover:shadow-md active:scale-95 sm:px-6">
+              Login
+            </button>
+          </Link>
         )
         }
       </div>
